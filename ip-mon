@@ -1,0 +1,30 @@
+#!/bin/bash
+# SPDX-License-Identifier: LGPL-2.1-or-later
+
+ETH0=enp10s0
+
+PING_LIST=ping-list.txt
+LOOP_SLEEP=5
+PING_TIMEOUT=2
+
+LOOP=0
+while true
+do
+	LOOP=$(( 1 + $LOOP ))
+	echo "#"
+	echo "# $(basename $0)] $LOOP"
+	echo "#"
+
+	if [ -f "$PING_LIST" ]; then
+		while IFS= read -r LINE || [ -n "$LINE" ]; do
+			ADDRESS=$(echo "$LINE" | sed 's/#.*//' | xargs)
+			if [ -n "$ADDRESS" ]; then
+				ping -c 1 -w $PING_TIMEOUT "$ADDRESS"
+			fi
+		done < "$PING_LIST"
+	fi
+
+	ip -s addr show dev $ETH0
+
+	sleep $LOOP_SLEEP
+done
