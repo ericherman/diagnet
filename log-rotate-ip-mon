@@ -1,0 +1,33 @@
+#!/bin/bash
+# SPDX-License-Identifier: LGPL-2.1-or-later
+
+# https://www.skarnet.org/software/s6/s6-log.html
+#  git://git.skarnet.org/s6
+#  ./configure --prefix=/usr/local --exec-prefix=/usr/local \
+#      --with-lib=/usr/local/lib/execline \
+#      && make && sudo make install
+#  depends upon:
+#  - skalibs
+#    https://skarnet.org/software/skalibs/
+#    git://git.skarnet.org/skalibs
+#    ./configure --prefix=/usr/local && make && sudo make install
+#  - execline
+#    https://skarnet.org/software/execline/
+#    git clone git://git.skarnet.org/execline
+#    ./configure --prefix=/usr/local && make && sudo make install
+#  - sudo ldconfig
+
+LOG_DIR=/tmp/log/ip-mon
+DIR=$(dirname $0)
+ISO_8601=T
+MAX_FILE_SIZE=$(( 1000 * 1000 ))
+ARCHIVE_LIMIT=10
+ARCHIVE_COMPRESS_CMD="gzip -nq9"
+
+mkdir -pv ${LOG_DIR}
+$DIR/ip-mon \
+	| s6-log ${ISO_8601} \
+		s${MAX_FILE_SIZE} \
+		n${ARCHIVE_LIMIT} \
+		!"$ARCHIVE_COMPRESS_CMD" \
+		${LOG_DIR}
