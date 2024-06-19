@@ -11,20 +11,25 @@ LOOP=0
 while true
 do
 	LOOP=$(( 1 + $LOOP ))
+	echo
 	echo "#"
 	echo "# $(basename $0)] $LOOP"
 	echo "#"
+
+	grep $ETH0 /proc/net/dev
 
 	if [ -f "$PING_LIST" ]; then
 		while IFS= read -r LINE || [ -n "$LINE" ]; do
 			ADDRESS=$(echo "$LINE" | sed 's/#.*//' | xargs)
 			if [ -n "$ADDRESS" ]; then
+				echo
 				ping -c 1 -w $PING_TIMEOUT "$ADDRESS"
 			fi
 		done < "$PING_LIST"
 	fi
 
-	ip -s addr show dev $ETH0
+	echo
+	ip -4 -s addr show dev $ETH0
 
 	sleep $LOOP_SLEEP
 done
