@@ -20,7 +20,7 @@
 LOG_DIR=/var/tmp/log/ip-mon
 DIR=$(dirname $0)
 ISO_8601=T
-MAX_FILE_SIZE=$(( 1000 * 1000 ))
+MAX_FILE_SIZE=$(( 100 * 1000 * 1000 ))
 ARCHIVE_LIMIT=10
 ARCHIVE_COMPRESS_CMD="gzip -nq9"
 
